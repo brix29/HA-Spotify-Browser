@@ -166,6 +166,7 @@ const SORT_TOKENS = {
     pinned: 'pinned',
     recently_played: 'recent',
     made_for_you: 'madeforyou',
+    podcasts: 'podcasts',
     favourite_playlists: 'favorites',
     followed_artists: 'artists',
     favourite_albums: 'albums',
@@ -335,9 +336,10 @@ const SCHEMA = {
 
     home: {
         defaults: {
-            sort: ['pinned', 'recent', 'madeforyou', 'favorites', 'artists', 'albums'],
+            sort: ['pinned', 'recent', 'madeforyou', 'podcasts', 'favorites', 'artists', 'albums'],
             pinned: false,
             made_for_you: { content: [], pills: false },
+            podcasts: { content: [] },
         },
         fields: {
             sort: sortTokens, // undefined (bad input) keeps the default order
@@ -348,6 +350,16 @@ const SCHEMA = {
                 fields: {
                     content: (v, path) => (Array.isArray(v) ? v : (warnOnce(path, `"${path}" must be a list. Ignored.`), [])),
                     pills: bool,
+                },
+            },
+            // Curated podcast row: a list of { id, title? } show entries.
+            // Covers are fetched at render time (get_show); title overrides the
+            // fetched show name when set.
+            podcasts: {
+                defaults: { content: [] },
+                primary: 'content',
+                fields: {
+                    content: (v, path) => (Array.isArray(v) ? v : (warnOnce(path, `"${path}" must be a list. Ignored.`), [])),
                 },
             },
         },

@@ -10,6 +10,7 @@ import './views/spotify-context-list.js';
 import './views/spotify-playlist-view.js';
 import './views/spotify-artist-view.js';
 import './views/spotify-section-view.js';
+import './views/spotify-show-view.js';
 
 export class SpotifyContextView extends LitElement {
     static get properties() {
@@ -442,6 +443,31 @@ export class SpotifyContextView extends LitElement {
                 } else {
                     console.error('[ContextView] Album Load Failed:', response);
                 }
+            } else if (type === 'show') {
+                // Podcast show: header (get_show) + first page of episodes.
+                const [showRes, epRes] = await Promise.all([
+                    this.api.getShow(id),
+                    this.api.getShowEpisodes(id, 50, 0),
+                ]);
+                const show = showRes?.result || {};
+                const epResult = epRes?.result;
+                const episodes = Array.isArray(epResult?.items) ? epResult.items
+                    : Array.isArray(epResult) ? epResult
+                    : (Array.isArray(show.episodes?.items) ? show.episodes.items : []);
+                this._contextData = {
+                    ...this._contextData,
+                    type: 'show',
+                    id,
+                    isLoading: false,
+                    name: show.name || this.data?.title || 'Podcast',
+                    publisher: show.publisher || '',
+                    description: show.description || '',
+                    images: show.images || [],
+                    uri: show.uri || `spotify:show:${id}`,
+                    episodes,
+                };
+                SpotifyContextView.cacheSet(this.pageId, this._contextData);
+                this.requestUpdate();
             } else if (type === 'artist-discography') {
                 // Artist name comes from the nav payload (this.data), NOT
                 // _contextData.name — that was just set to the 'Loading...'
@@ -792,14 +818,22 @@ export class SpotifyContextView extends LitElement {
             `;
         } else if (type === 'collection-playlists') {
             return html`
-                <spotify-context-list 
-                    .data=${this._contextData} 
+                <spotify-context-list
+                    .data=${this._contextData}
                     .type=${'playlist'}
                     .layout=${'grid'}
                     @load-more=${this._handleLoadMore}
                     @back=${(e) => { e.stopPropagation(); this.dispatchEvent(new CustomEvent('back', { bubbles: true, composed: true })); }}
                     @navigate=${(e) => { e.stopPropagation(); this.dispatchEvent(new CustomEvent('navigate', { detail: e.detail, bubbles: true, composed: true })); }}
                 ></spotify-context-list>
+            `;
+        } else if (type === 'show') {
+            return html`
+                <spotify-show-view
+                    .data=${this._contextData}
+                    .api=${this.api}
+                    .hass=${this.hass}
+                ></spotify-show-view>
             `;
         }
 

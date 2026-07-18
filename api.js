@@ -965,6 +965,18 @@ export class SpotifyApi {
         return await this.fetchSpotifyPlus('get_track_favorites', options);
     }
 
+    /** Catalog info for a single podcast show by Spotify id. */
+    async getShow(showId) {
+        if (!this.hass || !showId) return null;
+        return await this.fetchSpotifyPlus('get_show', { show_id: showId });
+    }
+
+    /** A page of a show's episodes (limit 1..50, offset paged). */
+    async getShowEpisodes(showId, limit = 50, offset = 0) {
+        if (!this.hass || !showId) return null;
+        return await this.fetchSpotifyPlus('get_show_episodes', { show_id: showId, limit, offset });
+    }
+
     async getCurrentUserPlaylists(options = {}) {
         if (!this.hass) return null;
         // options: limit, offset

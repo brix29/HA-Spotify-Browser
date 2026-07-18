@@ -477,6 +477,9 @@ class SpotifyHome extends LitElement {
             'albums': this._carouselSection('Your Favorite Albums', 'albums', sd['albums']),
             'madeforyou': hasMadeForYou
                 ? (usePills ? this._pillSection('Made For You', 'madeforyou', sd['madeforyou'], playingId) : this._carouselSection('Made For You', 'madeforyou', sd['madeforyou']))
+                : '',
+            'podcasts': (this.config.home?.podcasts?.content?.length > 0)
+                ? this._carouselSection('Podcasts', 'podcasts', sd['podcasts'])
                 : ''
         };
 
@@ -492,7 +495,7 @@ class SpotifyHome extends LitElement {
     _getSectionOrder() {
         // Parser emits home.sort pre-mapped to internal section ids.
         return this.config.home?.sort ||
-            ['pinned', 'recent', 'madeforyou', 'favorites', 'artists', 'albums'];
+            ['pinned', 'recent', 'madeforyou', 'podcasts', 'favorites', 'artists', 'albums'];
     }
 
     _getPlayingTrackId() {
@@ -547,6 +550,10 @@ class SpotifyHome extends LitElement {
                 return hasMadeForYou
                     ? (usePills ? this._pillSection('Made For You', 'madeforyou', sd['madeforyou'], playingId) : this._carouselSection('Made For You', 'madeforyou', sd['madeforyou']))
                     : '';
+            } else if (key === 'podcasts') {
+                return (this.config.home?.podcasts?.content?.length > 0)
+                    ? this._carouselSection('Podcasts', 'podcasts', sd['podcasts'])
+                    : '';
             }
             return '';
         };
@@ -584,6 +591,10 @@ class SpotifyHome extends LitElement {
                 const mfy = this.config.home?.made_for_you?.content;
                 if (!mfy || mfy.length === 0) return Promise.resolve();
             }
+            if (key === 'podcasts') {
+                const pods = this.config.home?.podcasts?.content;
+                if (!pods || pods.length === 0) return Promise.resolve();
+            }
             return this.fetchSectionData(key);
         });
 
@@ -604,6 +615,40 @@ class SpotifyHome extends LitElement {
                 this._sectionData = { ...this._sectionData, pinned: items };
             }
             this._fetching['pinned'] = false;
+            this.requestUpdate();
+            return;
+        }
+
+        if (sectionKey === 'podcasts') {
+            // Curated show row: config gives { id, title? } entries; we fetch
+            // each show once for its cover (title overrides the fetched name).
+            const shows = this.config.home?.podcasts?.content || [];
+            if (!shows.length) {
+                this._sectionData = { ...this._sectionData, podcasts: [] };
+                this._fetching['podcasts'] = false;
+                this.requestUpdate();
+                return;
+            }
+            const items = await Promise.all(shows.map(async (s) => {
+                const id = (s && typeof s === 'object') ? s.id : s;
+                const title = (s && typeof s === 'object') ? s.title : null;
+                if (!id) return null;
+                try {
+                    const res = await this.api.getShow(id);
+                    const show = res?.result || {};
+                    return {
+                        id, type: 'show',
+                        name: title || show.name || 'Podcast',
+                        subtitle: show.publisher || '',
+                        images: show.images || [],
+                        uri: show.uri || `spotify:show:${id}`,
+                    };
+                } catch (e) {
+                    return { id, type: 'show', name: title || 'Podcast', subtitle: '', images: [], uri: `spotify:show:${id}` };
+                }
+            }));
+            this._sectionData = { ...this._sectionData, podcasts: items.filter(Boolean) };
+            this._fetching['podcasts'] = false;
             this.requestUpdate();
             return;
         }
