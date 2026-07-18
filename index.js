@@ -145,13 +145,25 @@ class SpotifyExtension {
             return lovelace.config.spotify_browser;
         }
 
-        // 2. Check views for a custom:spotify-browser-card (top level or one level nested)
-        for (const view of lovelace.config.views || []) {
-            for (const card of view.cards || []) {
+        // 2. Find a custom:spotify-browser-card anywhere in the dashboard.
+        // Recurses through nested card arrays (stacks/grids) and supports both
+        // masonry (view.cards) and sections (view.sections[].cards) layouts.
+        const scan = (cards) => {
+            for (const card of cards || []) {
+                if (!card) continue;
                 if (card.type === 'custom:spotify-browser-card') return card;
-                for (const subCard of card.cards || []) {
-                    if (subCard.type === 'custom:spotify-browser-card') return subCard;
-                }
+                const nested = scan(card.cards);
+                if (nested) return nested;
+            }
+            return null;
+        };
+
+        for (const view of lovelace.config.views || []) {
+            const inCards = scan(view.cards);
+            if (inCards) return inCards;
+            for (const section of view.sections || []) {
+                const inSection = scan(section.cards);
+                if (inSection) return inSection;
             }
         }
 
