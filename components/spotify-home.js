@@ -227,6 +227,15 @@ class SpotifyHome extends LitElement {
             return;
         }
 
+        // Recommended/algorithmic mixes (Daily Mix, daylist, Discover Weekly…)
+        // can't be read via the Web API (get_playlist 500s), so there is no
+        // detail page to open — play the context directly instead.
+        if (type === 'playlist-recommended') {
+            const uri = item.uri || `spotify:playlist:${id}`;
+            this.api.playMedia(uri, 'playlist');
+            return;
+        }
+
         if (id && type) {
             this.dispatchEvent(new CustomEvent('navigate', {
                 detail: {
