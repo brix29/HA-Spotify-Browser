@@ -324,12 +324,21 @@ class SpotifyLibrary extends LitElement {
         }));
     }
 
+    _goHome() {
+        this.dispatchEvent(new CustomEvent('navigate', {
+            detail: { pageId: 'home' }, bubbles: true, composed: true
+        }));
+    }
+
     // ---- Render ----
 
     render() {
         return html`
             <div class="l-scroll">
                 <div class="l-top">
+                    <button class="l-icon-btn" @click=${this._goHome} aria-label="Home" style="margin-right: 2px;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                    </button>
                     <div class="l-title">Your Library</div>
                     <button class="l-icon-btn" @click=${this._openSearch} aria-label="Search">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>

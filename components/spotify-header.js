@@ -143,16 +143,28 @@ class SpotifyHeader extends LitElement {
                 </div>
 
                 ${this.minimal ? html`
-                <button
-                    class="nav-btn"
-                    id="mobile-close-btn"
-                    style="margin-left: auto;"
-                    aria-label="Close"
-                    @pointerdown=${(e) => e.stopPropagation()}
-                    @click=${() => this.dispatchEvent(new CustomEvent('close-click'))}
-                >
-                    <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
+                <div class="mobile-nav-group" style="margin-left: auto; display: flex; align-items: center; gap: 2px;">
+                    <button class="nav-btn" aria-label="Home"
+                        @pointerdown=${(e) => e.stopPropagation()}
+                        @click=${() => this.dispatchEvent(new CustomEvent('nav-click', { detail: 'home' }))}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                    </button>
+                    <button class="nav-btn" aria-label="Search"
+                        @pointerdown=${(e) => e.stopPropagation()}
+                        @click=${() => this.dispatchEvent(new CustomEvent('nav-click', { detail: 'search' }))}>
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                    </button>
+                    <button class="nav-btn" aria-label="Your Library"
+                        @pointerdown=${(e) => e.stopPropagation()}
+                        @click=${() => this.dispatchEvent(new CustomEvent('nav-click', { detail: 'library' }))}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></svg>
+                    </button>
+                    <button class="nav-btn" id="mobile-close-btn" aria-label="Close"
+                        @pointerdown=${(e) => e.stopPropagation()}
+                        @click=${() => this.dispatchEvent(new CustomEvent('close-click'))}>
+                        <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
                 ` : ''}
 
                 ${this.minimal ? '' : html`

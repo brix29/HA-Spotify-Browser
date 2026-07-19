@@ -350,7 +350,7 @@ export const sharedStyles = css`
         }
         .mobile-mini-player {
             position: absolute;
-            bottom: calc(60px + var(--spf-safe-bottom, 0px) + 8px);
+            bottom: calc(var(--spf-safe-bottom, 0px) + 8px);
             left: 8px;
             right: 8px;
             height: 62px;
@@ -478,35 +478,29 @@ export const sharedStyles = css`
             transition: width 0.5s linear;
         }
 
-        /* Ensure view containers are padded above mini player and bottom nav */
+        /* Bottom padding only needs to clear the floating mini-player now that
+           the bottom nav has moved into the header. */
         .scroll-content {
-            padding-bottom: calc(130px + var(--spf-safe-bottom, 0px)) !important;
+            padding-bottom: calc(80px + var(--spf-safe-bottom, 0px)) !important;
         }
         .main-scroll-container {
-            padding-bottom: calc(130px + var(--spf-safe-bottom, 0px)) !important;
+            padding-bottom: calc(80px + var(--spf-safe-bottom, 0px)) !important;
         }
         .list-container {
-            padding-bottom: calc(130px + var(--spf-safe-bottom, 0px)) !important;
+            padding-bottom: calc(80px + var(--spf-safe-bottom, 0px)) !important;
         }
     }
 
     /* Short screens (e.g. 480x320 wall tablets): reclaim vertical space for
-       content by slimming the mobile chrome (nav labels off, smaller bars). */
+       content by slimming the mobile chrome. */
     @media (max-width: 768px) and (max-height: 400px) {
         .header { height: calc(48px + var(--spf-safe-top, 0px)) !important; }
-        .mobile-bottom-nav { height: calc(44px + var(--spf-safe-bottom, 0px)); }
-        .nav-tab { gap: 0; }
-        .nav-tab span { display: none; }
-        .nav-tab svg { width: 20px; height: 20px; }
-        .mobile-mini-player {
-            height: 46px;
-            bottom: calc(44px + var(--spf-safe-bottom, 0px) + 6px);
-        }
+        .mobile-mini-player { height: 46px; }
         .mini-player-art { width: 34px; height: 34px; }
         .scroll-content,
         .main-scroll-container,
         .list-container {
-            padding-bottom: calc(96px + var(--spf-safe-bottom, 0px)) !important;
+            padding-bottom: calc(62px + var(--spf-safe-bottom, 0px)) !important;
         }
     }
 
