@@ -490,6 +490,26 @@ export const sharedStyles = css`
         }
     }
 
+    /* Short screens (e.g. 480x320 wall tablets): reclaim vertical space for
+       content by slimming the mobile chrome (nav labels off, smaller bars). */
+    @media (max-width: 768px) and (max-height: 400px) {
+        .header { height: calc(48px + var(--spf-safe-top, 0px)) !important; }
+        .mobile-bottom-nav { height: calc(44px + var(--spf-safe-bottom, 0px)); }
+        .nav-tab { gap: 0; }
+        .nav-tab span { display: none; }
+        .nav-tab svg { width: 20px; height: 20px; }
+        .mobile-mini-player {
+            height: 46px;
+            bottom: calc(44px + var(--spf-safe-bottom, 0px) + 6px);
+        }
+        .mini-player-art { width: 34px; height: 34px; }
+        .scroll-content,
+        .main-scroll-container,
+        .list-container {
+            padding-bottom: calc(96px + var(--spf-safe-bottom, 0px)) !important;
+        }
+    }
+
     /* --- Header --- */
     .header {
         position: absolute; top: 0; left: 0; right: 0;

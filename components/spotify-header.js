@@ -142,6 +142,19 @@ class SpotifyHeader extends LitElement {
                     ${this.centerTitle}
                 </div>
 
+                ${this.minimal ? html`
+                <button
+                    class="nav-btn"
+                    id="mobile-close-btn"
+                    style="margin-left: auto;"
+                    aria-label="Close"
+                    @pointerdown=${(e) => e.stopPropagation()}
+                    @click=${() => this.dispatchEvent(new CustomEvent('close-click'))}
+                >
+                    <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+                ` : ''}
+
                 ${this.minimal ? '' : html`
                 <div class="header-center" style="display: ${this.searchVisible ? 'flex' : 'none'}"></div>
                 <div class="header-right">
