@@ -237,8 +237,6 @@ export class SpotifyConnectPanel extends LitElement {
 
         return html`
             <spotify-bottom-sheet .visible=${this.visible}>
-                <h2 class="title">Connect</h2>
-
                 ${active ? html`
                     <div class="card">
                         <div class="card-top">
