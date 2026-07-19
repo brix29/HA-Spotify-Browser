@@ -86,7 +86,14 @@ export const headerStyles = css`
     }
     @media (hover: hover) { .nav-btn:hover { background: var(--spf-hover-white); } }
     .nav-btn:active { background: var(--spf-active-white); }
-    .nav-btn svg { pointer-events: none; } 
+    .nav-btn svg { pointer-events: none; }
+
+    /* Mobile header nav group (Home/Search/Library/Close) — ~30% larger tap
+       targets and icons than the default nav buttons, for wall tablets. */
+    .mobile-nav-group { gap: 4px !important; }
+    .mobile-nav-group .nav-btn { width: 42px; height: 42px; }
+    .mobile-nav-group .nav-btn svg { width: 26px; height: 26px; }
+    .mobile-nav-group #mobile-close-btn svg { width: 28px; height: 28px; }
     
     /* --- Search Box --- */
     .search-container {
